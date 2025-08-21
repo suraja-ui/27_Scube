@@ -19,6 +19,31 @@ Tech Stack
 - Frontend→ HTML, JavaScript (Vanilla), Fetch API  
 - Libraries → BeautifulSoup, Requests  
 
+🚀 Features
 
-Project Structure
+✅ Enter any website URL
+✅ Audits for Security, SEO, Performance, Accessibility
+✅ Generates scores and recommendations
+✅ Beautiful colorful UI with results
+✅ Option to download JSON report
+🔗 Deployed Links
+
+Frontend (Live): https://suraja-ui.github.io/website-audit-tool/
+
+Backend API Docs: https://YOUR-BACKEND.onrender.com/docs
+
+GitHub Repo: https://github.com/suraja-ui/website-audit-tool
+
+🖥️ Local Setup
+1. Clone Repo
+git clone https://github.com/suraja-ui/website-audit-tool.git
+cd website-audit-tool
+2. Backend Setup
+cd backend
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+3. Frontend Setup
+
+Open docs/index.html in your browser.
+
 

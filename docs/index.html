@@ -1,2 +1,119 @@
-<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>Website Audit Tool</title><style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:24px}.card{border:1px solid #ddd;border-radius:12px;padding:16px;max-width:900px}.row{display:flex;gap:8px;align-items:center}input,button{padding:10px 12px;border-radius:8px;border:1px solid #bbb;font-size:16px}button{cursor:pointer}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.score{font-weight:700;font-size:22px}pre{background:#f7f7f7;padding:12px;border-radius:8px;overflow:auto}.muted{color:#666}.pill{border-radius:999px;padding:2px 10px;border:1px solid #ddd;display:inline-block;margin:2px}</style></head><body><h1>Website Audit Tool</h1><p class='muted'>Enter a URL and get quick Security, SEO, Performance, and Accessibility checks.</p><div class='card'><div class='row'><input id='url' placeholder='https://example.com' style='flex:1'/><button id='run'>Run Audit</button><button id='download' disabled>Download Report</button></div></div><div id='results' class='card' style='margin-top:12px;display:none;'><h2>Results</h2><div class='grid'><div>Security: <span id='sec' class='score'>-</span></div><div>SEO: <span id='seo' class='score'>-</span></div><div>Performance: <span id='perf' class='score'>-</span></div><div>Accessibility: <span id='a11y' class='score'>-</span></div></div><h3>Top Recommendations</h3><ul id='recs'></ul><h3>Details</h3><div><strong>Passes:</strong> <div id='passes'></div></div><div style='margin-top:6px;'><strong>Issues:</strong> <div id='issues'></div></div><h4 class='muted'>Raw JSON</h4><pre id='raw'></pre></div><script src="./script.js?v=5"></script>
-</body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Website Audit Tool — colourful</title>
+
+  <style>
+    :root{
+      --bg1:#0ea5e9; --bg2:#22c55e; --bg3:#a855f7; --bg4:#f59e0b;
+      --card:#0b1220EE; --text:#e5e7eb; --muted:#9aa4b2;
+      --good:#16a34a; --ok:#eab308; --bad:#ef4444;
+      --chip:#1f2937; --chip-b:#ffffff22;
+      --btn1:#22d3ee; --btn2:#a78bfa;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; color:var(--text); font-family: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;
+      background: linear-gradient(120deg, var(--bg1), var(--bg2), var(--bg3), var(--bg4));
+      background-size: 260% 260%; animation:bgmove 16s ease-in-out infinite;
+    }
+    @keyframes bgmove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+    .shell{max-width:1100px; width:100%}
+    .row{display:flex; gap:10px; align-items:center}
+    .card{
+      background:var(--card); border:1px solid #FFFFFF1A; border-radius:22px; padding:18px;
+      box-shadow: 0 12px 36px rgba(0,0,0,.35); backdrop-filter: blur(6px);
+    }
+    h1{margin:0 0 6px 0; font-size:32px; letter-spacing:.2px}
+    .muted{color:var(--muted)}
+    input, button{
+      padding:12px 14px; border-radius:12px; border:1px solid #ffffff22; background:#0f172a; color:var(--text); font-size:16px;
+    }
+    input{flex:1}
+    button{cursor:pointer; border:none; font-weight:700; transition: transform .05s ease}
+    button:active{transform: translateY(1px)}
+    #run{
+      background: linear-gradient(90deg, var(--btn1), var(--btn2));
+      color:#0b1220; border: none;
+    }
+    #download{background:#0f172a; border:1px solid #ffffff22}
+    button:disabled{opacity:.6; cursor:not-allowed}
+
+    .grid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px}
+    .score{
+      display:flex; align-items:center; justify-content:center; height:66px;
+      background:#0f172a; border:1px solid #ffffff1c; border-radius:16px; font-weight:900; font-size:22px
+    }
+    .score.good{outline:2px solid var(--good)} .score.ok{outline:2px solid var(--ok)} .score.bad{outline:2px solid var(--bad)}
+
+    .chip{display:inline-block; background:var(--chip); border:1px solid var(--chip-b); color:#e2e8f0;
+      padding:6px 10px; border-radius:999px; font-size:13px; margin:4px 6px 0 0}
+    ul{margin:8px 0 0 18px}
+    pre{background:#0f172a;border:1px solid #ffffff1c; color:#cbd5e1; padding:12px; border-radius:14px; overflow:auto}
+
+    /* spinner */
+    .spinwrap{display:none; place-items:center; margin-top:12px}
+    .spinner{
+      width:28px; height:28px; border-radius:50%;
+      border:3px solid #ffffff33; border-top-color:#fff; animation: spin 1s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* hero layout */
+    .hero{display:grid; grid-template-columns:1.2fr 1fr; gap:14px; align-items:center; margin-bottom:14px;}
+    .imgcard{min-height:220px;background:url('https://images.unsplash.com/photo-1529832393076-359d1b289dd8?q=80&w=1600&auto=format&fit=crop') center/cover;border-radius:22px}
+    @media(max-width:900px){ .hero{grid-template-columns:1fr} .imgcard{min-height:160px} .grid{grid-template-columns:repeat(2,1fr)} }
+    .foot{margin-top:12px; text-align:center; color:#d1d5db; font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="shell">
+
+    <div class="hero">
+      <div class="card">
+        <h1>Website Audit Tool</h1>
+        <div class="muted">Security • SEO • Performance • Accessibility</div>
+
+        <div class="row" style="margin-top:10px;">
+          <input id="url" placeholder="https://example.com"/>
+          <button id="run">Run Audit</button>
+          <button id="download" disabled>Download Report</button>
+        </div>
+
+        <!-- spinner -->
+        <div id="spin" class="spinwrap"><div class="spinner"></div> &nbsp;<span class="muted">Running audit… server may wake up ⏳</span></div>
+      </div>
+
+      <div class="card imgcard" title="Illustration from Unsplash"></div>
+    </div>
+
+    <div id="results" class="card" style="display:none;">
+      <div class="grid">
+        <div id="sec"  class="score">-</div>
+        <div id="seo"  class="score">-</div>
+        <div id="perf" class="score">-</div>
+        <div id="a11y" class="score">-</div>
+      </div>
+
+      <h2 style="margin:10px 0 8px 0">Top Recommendations</h2>
+      <ul id="recs"></ul>
+
+      <h2 style="margin:10px 0 8px 0">Details</h2>
+      <div><strong>Passes:</strong> <span id="passes"></span></div>
+      <div style="margin-top:8px;"><strong>Issues:</strong> <span id="issues"></span></div>
+
+      <h2 style="margin:10px 0 8px 0">Raw JSON</h2>
+      <pre id="raw"></pre>
+    </div>
+
+    <div class="foot">Built for HackYugma 2k25 • Team Suraja • Colours + spinner added</div>
+  </div>
+
+  <!-- cache-busted include -->
+  <script src="./script.js?v=7"></script>
+</body>
+</html>

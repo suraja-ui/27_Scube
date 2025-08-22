@@ -18,7 +18,7 @@
       margin:0; color:var(--text); font-family: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
       min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;
       background: linear-gradient(120deg, var(--bg1), var(--bg2), var(--bg3), var(--bg4));
-      background-size: 260% 260%; animation:bgmove 16s ease-in-out infinite;
+      background-size:260% 260%; animation:bgmove 16s ease-in-out infinite;
     }
     @keyframes bgmove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
@@ -26,7 +26,7 @@
     .row{display:flex; gap:10px; align-items:center}
     .card{
       background:var(--card); border:1px solid #FFFFFF1A; border-radius:22px; padding:18px;
-      box-shadow: 0 12px 36px rgba(0,0,0,.35); backdrop-filter: blur(6px);
+      box-shadow:0 12px 36px rgba(0,0,0,.35); backdrop-filter: blur(6px);
     }
     h1{margin:0 0 6px 0; font-size:32px; letter-spacing:.2px}
     .muted{color:var(--muted)}
@@ -36,10 +36,7 @@
     input{flex:1}
     button{cursor:pointer; border:none; font-weight:700; transition: transform .05s ease}
     button:active{transform: translateY(1px)}
-    #run{
-      background: linear-gradient(90deg, var(--btn1), var(--btn2));
-      color:#0b1220; border: none;
-    }
+    #run{background:linear-gradient(90deg, var(--btn1), var(--btn2)); color:#0b1220;}
     #download{background:#0f172a; border:1px solid #ffffff22}
     button:disabled{opacity:.6; cursor:not-allowed}
 
@@ -49,6 +46,8 @@
       background:#0f172a; border:1px solid #ffffff1c; border-radius:16px; font-weight:900; font-size:22px
     }
     .score.good{outline:2px solid var(--good)} .score.ok{outline:2px solid var(--ok)} .score.bad{outline:2px solid var(--bad)}
+    .scorewrap{text-align:center}
+    .label{margin-top:6px; font-size:14px; color:#cbd5e1}
 
     .chip{display:inline-block; background:var(--chip); border:1px solid var(--chip-b); color:#e2e8f0;
       padding:6px 10px; border-radius:999px; font-size:13px; margin:4px 6px 0 0}
@@ -57,10 +56,7 @@
 
     /* spinner */
     .spinwrap{display:none; place-items:center; margin-top:12px}
-    .spinner{
-      width:28px; height:28px; border-radius:50%;
-      border:3px solid #ffffff33; border-top-color:#fff; animation: spin 1s linear infinite;
-    }
+    .spinner{width:28px; height:28px; border-radius:50%; border:3px solid #ffffff33; border-top-color:#fff; animation:spin 1s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
 
     /* hero layout */
@@ -93,10 +89,22 @@
 
     <div id="results" class="card" style="display:none;">
       <div class="grid">
-        <div id="sec"  class="score">-</div>
-        <div id="seo"  class="score">-</div>
-        <div id="perf" class="score">-</div>
-        <div id="a11y" class="score">-</div>
+        <div class="scorewrap">
+          <div id="sec"  class="score">-</div>
+          <div class="label">Security</div>
+        </div>
+        <div class="scorewrap">
+          <div id="seo"  class="score">-</div>
+          <div class="label">SEO</div>
+        </div>
+        <div class="scorewrap">
+          <div id="perf" class="score">-</div>
+          <div class="label">Performance</div>
+        </div>
+        <div class="scorewrap">
+          <div id="a11y" class="score">-</div>
+          <div class="label">Accessibility</div>
+        </div>
       </div>
 
       <h2 style="margin:10px 0 8px 0">Top Recommendations</h2>
@@ -110,10 +118,10 @@
       <pre id="raw"></pre>
     </div>
 
-    <div class="foot">Built for HackYugma 2k25 • Team Suraja • Colours + spinner added</div>
+    <div class="foot">Built for HackYugma 2k25 • Team Suraja • Colours + spinner + labels</div>
   </div>
 
   <!-- cache-busted include -->
-  <script src="./script.js?v=7"></script>
+  <script src="./script.js?v=8"></script>
 </body>
 </html>
